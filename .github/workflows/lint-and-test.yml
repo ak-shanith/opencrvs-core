@@ -102,6 +102,7 @@ jobs:
         if: steps.check-scripts.outputs.skip != 'true'
         run: CI="" yarn install --frozen-lockfile
 
+      # TODO: Move out of the matrix to be built once and shared
       - name: Build common package
         if: steps.check-scripts.outputs.skip != 'true'
         run: cd packages/commons && yarn build
