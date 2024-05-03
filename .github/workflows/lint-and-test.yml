@@ -114,6 +114,7 @@ jobs:
             cd packages/components && yarn build
           fi
 
+      # TODO: should run parallel to unit tests as can take as much as unit tests
       - name: Run linting
         if: steps.check-scripts.outputs.skip != 'true' && steps.check-scripts.outputs.skip-lint != 'true'
         run: cd ${{ matrix.package }} && yarn lint
