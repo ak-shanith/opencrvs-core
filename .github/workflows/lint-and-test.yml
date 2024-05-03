@@ -88,9 +88,9 @@ jobs:
         uses: actions/cache@v3
         with:
           path: |
-            '**/node_modules'
+            "**/node_modules"
             "${{ matrix.package }}/node_modules"
-          key: node-${{ hashFiles("**/yarn.lock", "${{ matrix.package }}/packages.json") }}
+          key: node-${{ hashFiles('**/yarn.lock', format('{0}/{1}',matrix.package,'package.json')) }}
           restore-keys: |
             ${{ runner.os }}-node-
 
