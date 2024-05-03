@@ -89,7 +89,7 @@ jobs:
         with:
           path: |
             "**/node_modules"
-            "${{ matrix.package }}/node_modules"
+            "**/${{ matrix.package }}/node_modules"
           key: node-${{ hashFiles('**/yarn.lock', format('{0}/{1}',matrix.package,'package.json')) }}
           restore-keys: |
             ${{ runner.os }}-node-
@@ -119,7 +119,7 @@ jobs:
 
       - name: Run Unit Test
         if: steps.check-scripts.outputs.skip != 'true' && steps.check-scripts.outputs.skip-test != 'true'
-        run: cd ${{ matrix.package }} && yarn test
+        run: cd ${{ matrix.package }} && yarn test && ls -lha && ls -lha ../../
 
   security-scans:
     needs: setup
