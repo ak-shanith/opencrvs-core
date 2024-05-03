@@ -98,7 +98,7 @@ jobs:
 
       - name: Runs dependency installation
         if: steps.check-scripts.outputs.skip != 'true' && steps.check-scripts.outputs.skip-tests != 'true' && steps.check-scripts.outputs.skip-lint != 'true'
-        run: CI="" yarn install --frozen-lockfile
+        run: ls -lha && ls -lha ${{ matrix.package }} && CI="" yarn install --frozen-lockfile
 
       - name: Build common package
         if: steps.check-scripts.outputs.skip != 'true'
