@@ -99,7 +99,7 @@ jobs:
         run: npx license-check-and-add check -f license-config.json
 
       - name: Runs dependency installation
-        if: steps.check-scripts.outputs.skip != 'true' && steps.check-scripts.outputs.skip-tests != 'true' && steps.check-scripts.outputs.skip-lint != 'true'
+        if: steps.check-scripts.outputs.skip != 'true'
         run: CI="" yarn install --frozen-lockfile
 
       - name: Build common package
