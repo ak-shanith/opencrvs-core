@@ -26,7 +26,7 @@ jobs:
         run: |
           PACKAGES=$(ls -d packages/* | jq -R -s -c 'split("\n")[:-1]')
           echo "Found packages: $PACKAGES"
-          echo "::set-output name=matrix::${PACKAGES}"
+          echo "matrix=${PACKAGES}" >> $GITHUB_OUTPUT
 
   test:
     needs: setup
@@ -45,22 +45,22 @@ jobs:
         run: |
           if [ ! -f "${{ matrix.package }}/package.json" ]; then
             echo "No package.json found for ${{ matrix.package }}. Stopping pipeline."
-            echo "::set-output name=skip::true"
+            echo "skip=true" >> $GITHUB_OUTPUT
           else
-            echo "::set-output name=skip::false"
+            echo "skip=false" >> $GITHUB_OUTPUT
 
             if ! grep -q "\"test\":" "${{ matrix.package }}/package.json"; then
               echo "Test not found in ${{ matrix.package }}"
-              echo "::set-output name=skip-test::true"
+              echo "skip-test=true" >> $GITHUB_OUTPUT
             else
-              echo "::set-output name=skip-test::false"
+              echo "skip=false" >> $GITHUB_OUTPUT
             fi
 
             if ! grep -q "\"lint\":" "${{ matrix.package }}/package.json"; then
               echo "Lint scripts not found in ${{ matrix.package }}. Stopping pipeline."
-              echo "::set-output name=skip-lint::true"
+              echo "skip-lint=true" >> $GITHUB_OUTPUT
             else
-              echo "::set-output name=skip-lint::false"
+              echo "skip-lint=false" >> $GITHUB_OUTPUT
             fi
           fi
 
@@ -87,8 +87,10 @@ jobs:
       - name: Cache Node.js dependencies
         uses: actions/cache@v3
         with:
-          path: '**/node_modules'
-          key: node-${{ hashFiles('**/yarn.lock') }}
+          path: |
+            '**/node_modules'
+            "${{ matrix.package }}/node_modules"
+          key: node-${{ hashFiles("**/yarn.lock", "${{ matrix.package }}/packages.json") }}
           restore-keys: |
             ${{ runner.os }}-node-
 
