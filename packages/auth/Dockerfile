@@ -1,27 +1,18 @@
-FROM node:hydrogen-alpine
+FROM node:18-slim
 
 WORKDIR /app
 
-RUN apk update && apk upgrade
+RUN apt-get update && apt-get upgrade -y
 
-COPY . .
+COPY *.json .
+COPY yarn.lock .
 
-RUN rm -rf /app/packages/*
+COPY packages/commons /app/packages/commons
+RUN cd packages/commons && yarn install && yarn build
 
 COPY packages/auth /app/packages/auth
-COPY packages/commons /app/packages/commons
-
-RUN yarn install
-
-WORKDIR /app/packages/commons
-RUN yarn build
+RUN cd packages/auth && yarn install && yarn build
 
 WORKDIR /app/packages/auth
-RUN yarn build
 
-# FIXME: to be replaced later with whole build running as node
-RUN chown -R node:node /app
-
-USER node
-
-CMD yarn start:prod
+CMD ["yarn", "start:prod"]
