@@ -87,7 +87,9 @@ jobs:
       - name: Cache Node.js dependencies
         uses: actions/cache@v4
         with:
-          path: '**/node_modules'
+          path: |
+            **/node_modules
+            ~/.cache/yarn/v6
           key: node-${{ hashFiles('**/yarn.lock', format('{0}/{1}',matrix.package,'package.json')) }}
           restore-keys: |
             ${{ runner.os }}-node-
@@ -98,7 +100,7 @@ jobs:
 
       - name: Runs dependency installation
         if: steps.check-scripts.outputs.skip != 'true' && steps.check-scripts.outputs.skip-tests != 'true' && steps.check-scripts.outputs.skip-lint != 'true'
-        run: ls -lha node_modules && ls -lha ${{ matrix.package }}/node_modules && yarn cache dir && CI="" yarn install --frozen-lockfile --verbose
+        run: ls -lha node_modules && ls -lha ${{ matrix.package }}/node_modules && CI="" yarn install --frozen-lockfile
 
       - name: Build common package
         if: steps.check-scripts.outputs.skip != 'true'
