@@ -64,12 +64,11 @@ jobs:
             fi
           fi
 
-      - name: Use Node.js 18.19
+      - name: Use Node.js from .nvmrc
         if: steps.check-scripts.outputs.skip != 'true'
         uses: actions/setup-node@v4
         with:
-          node-version: '18.19'
-          cache: 'npm'
+          node-version-file: .nvmrc
 
       - name: Remove other package directories
         if: steps.check-scripts.outputs.skip != 'true'
@@ -85,13 +84,21 @@ jobs:
             fi
           done
 
+      - name: Cache Node.js dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/node_modules
+          key: node-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
       - name: Verify every file has a license header
         if: steps.check-scripts.outputs.skip != 'true'
         run: npx license-check-and-add check -f license-config.json
 
       - name: Runs dependency installation
         if: steps.check-scripts.outputs.skip != 'true'
-        run: CI="" yarn
+        run: CI="" yarn install --frozen-lockfile
 
       - name: Build common package
         if: steps.check-scripts.outputs.skip != 'true'

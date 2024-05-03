@@ -4,6 +4,8 @@ WORKDIR /app
 
 RUN apt-get update && apt-get upgrade -y
 
+USER node
+
 COPY *.json .
 COPY yarn.lock .
 
